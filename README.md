@@ -1,5 +1,5 @@
 # User Guide
-Code Snippets are available in Jupyter for all the code blocks mentioned below. Snippets can be easily dragged-and-dropped for usage.
+Code Snippets are available in notebooks for all the code blocks mentioned below. Snippets can be easily dragged-and-dropped for usage.
 ## Datasets
 
 ### Creating datasets
@@ -92,7 +92,6 @@ An experiment captures the following:
 5. Artifacts
 6. Plots (recorded automatically)
 
-### User Interface
 ### Create an experiment
 ```python
 task = Task.init(
@@ -100,21 +99,27 @@ task = Task.init(
     tags=['Regression','Best fit'], # Add a list of tags (str) to the created Task
 )
 ```
+![Experiment](images/experiment.png)
+
+
 ### Get an existing experiment
 ```python
 task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
 ```
 
-### See an experiment's progress
+
+### Monitor an experiment's progress
 ```python
 task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
 task.set_progress(0)
 # task doing stuff
 task.set_progress(50)
 print(task.get_progress())
-# task doing more stuff
-task.set_progress(100)
 ```
+An experiment's progress can be seen in the experiments list panel as a loader & in the INFO tab. In the image below, the progress is 50%.
+
+![Progress](images/progress.png)
+
 ### Hyperparameters
 Hyperparameters are a script's configuration. Many command line parameters are automatically logged by CaiML including:
 - click
@@ -123,6 +128,11 @@ Hyperparameters are a script's configuration. Many command line parameters are a
 - LightningCLI
 
 TensorFlow Definitions are also automatically logged: TensorFlow MNIST & TensorBoard PR Curve
+
+Here's an example of automatic logging of tensorflow hyperparameters
+
+![Hyperparameters](images/hyperparameters.png)
+
 To manually log hyperparameters:
 #### Manually log hyperparameters
 ```python
@@ -145,7 +155,11 @@ CaiML allows easy storage of experiments' output products as artifacts that can 
 -   Files and folders
 -   Python objects
 
+![Artifacts](images/artifacts.png)
+
+
 #### Upload python objects as artifacts
+
 Python objects can be uploaded as artifacts:
 ```python
 task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
@@ -158,14 +172,6 @@ To upload files/folders as artifacts:
 ```python
 task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
 task.upload_artifact(name='Sunflower image', artifact_object='images/sunflower.jpg')
-```
-
-#### Download and use artifact
-**artifact_path** has the local relative path of the downloaded artifact
-```python
-task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
-
-artifact_path = task.artifacts['Sunflower image'].get_local_copy()
 ```
 
 ### Finalise an experiment
@@ -185,6 +191,8 @@ CaiML provides automatic recording of standard python models such as:
 - FastAI
 - MegEngine
 - CatBoost
+
+![Models](images/models.png)
 
 To manually log a model:
 
@@ -243,7 +251,7 @@ model.publish()
 ```
 
 ### Get Model URL
-Similarly other properties can be gotten from 
+Similarly other properties can be gotten from a model. An exhaustive list can be found in the code snippets in notebook.
 ```python
 from caiml import InputModel, OutputModel
 url = model.url # model can be an instance of either of OutputModel/InputModel class
