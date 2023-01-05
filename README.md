@@ -1,5 +1,5 @@
 # User Guide
-Code Snippets are available in Jupyter for all the code blocks mentioned below.
+Code Snippets are available in Jupyter for all the code blocks mentioned below. Snippets can be easily dragged-and-dropped for usage.
 ## Datasets
 
 ### Creating datasets
