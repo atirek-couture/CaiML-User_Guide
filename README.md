@@ -192,6 +192,13 @@ CaiML provides automatic recording of standard python models such as:
 - MegEngine
 - CatBoost
 
+To record a model, simply initiate  a CaiML task in your notebook code:
+```python
+task = Task.init(
+    task_name='Tensorflow Model', # task name of at least 3 characters
+)
+```
+
 ![Models](images/models.png)
 
 To manually log a model:
