@@ -1,4 +1,5 @@
 # User Guide
+Code Snippets are available in Jupyter for all the code blocks mentioned below.
 ## Datasets
 
 ### Creating datasets
