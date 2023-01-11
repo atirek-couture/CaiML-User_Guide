@@ -218,14 +218,14 @@ output_model.update_weights(weights_filename='', # Either add a local weights fi
                             registered_uri='https://github.com/ultralytics/yolov5/releases/download/v6.2/yolov5x6.pt') # or add a valid URL of the weights file here
 ```
 
-### Use a registered model
-Use a model registered with CaiML
+### Get instance of a registered model
+Get instance of a model registered with CaiML
 ```python
 from caiml import InputModel
 input_model = InputModel(model_id="c6b147a022274092bc3e1b75f5f09d7a") # get model_id from the GUI
 ```
 
-### Use an external model
+### Get instance of an external model
 ```python
 from caiml import InputModel
 input_model = InputModel.import_model(weights_url="https://github.com/ultralytics/yolov5/releases/download/v6.2/yolov5x6.pt", # A valid URL for the weights file. For a local file user file://
