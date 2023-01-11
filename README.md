@@ -1,7 +1,7 @@
 # User Guide
 Code Snippets are available in notebooks for all the code blocks mentioned below. Snippets can be easily dragged-and-dropped for usage.
 ## Datasets
-
+TODO: Define dataset here
 ### Creating datasets
 A dataset can be created: 
  1. From scratch:  
@@ -94,9 +94,9 @@ An experiment captures the following:
 
 ### Create an experiment
 ```python
-task = Task.init(
-    task_name='Linear Regression', # task name of at least 3 characters
-    tags=['Regression','Best fit'], # Add a list of tags (str) to the created Task
+experiment = Experiment.init(
+    experiment_name='Linear Regression', # experiment name of at least 3 characters
+    tags=['Regression','Best fit'], # Add a list of tags (str) to the created Experiment
 )
 ```
 ![Experiment](images/experiment.png)
@@ -104,17 +104,17 @@ task = Task.init(
 
 ### Get an existing experiment
 ```python
-task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
 ```
 
 
 ### Monitor an experiment's progress
 ```python
-task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
-task.set_progress(0)
-# task doing stuff
-task.set_progress(50)
-print(task.get_progress())
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
+experiment.set_progress(0)
+# experiment doing stuff
+experiment.set_progress(50)
+print(experiment.get_progress())
 ```
 An experiment's progress can be seen in the experiments list panel as a loader & in the INFO tab. In the image below, the progress is 50%.
 
@@ -136,16 +136,16 @@ Here's an example of automatic logging of tensorflow hyperparameters
 To manually log hyperparameters:
 #### Manually log hyperparameters
 ```python
-task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
-task.set_parameters_as_dict({'epochs': 20, 'max_value':100}) # pass hyperparameters as string:number dictionary
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
+experiment.set_parameters_as_dict({'epochs': 20, 'max_value':100}) # pass hyperparameters as string:number dictionary
 ```
 
 #### Log python objects
 Python objects such as variables, classes, numpy objects can be logged
 ```python 
-task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
 params_dict = {'epochs': 20, 'max_value':100}
-task.connect(params_dict)
+experiment.connect(params_dict)
 ```
 ### Artifacts
 CaiML allows easy storage of experiments' output products as artifacts that can later be accessed easily and used. Some examples of artifacts are:
@@ -162,23 +162,23 @@ CaiML allows easy storage of experiments' output products as artifacts that can 
 
 Python objects can be uploaded as artifacts:
 ```python
-task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
 params_dict = {'epochs': 20, 'max_value':100}
-task.upload_artifact(name='Parameters dictionary', artifact_object=params_dict)
+experiment.upload_artifact(name='Parameters dictionary', artifact_object=params_dict)
 ```
 #### Upload files as objects
 To upload files/folders as artifacts:
 **artifact_object** refers to the relative path of the file/folder
 ```python
-task = Task.get_task(task_id='c6b147a022274092bc3e1b75f5f09d7a') # get task ID from GUI
-task.upload_artifact(name='Sunflower image', artifact_object='images/sunflower.jpg')
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
+experiment.upload_artifact(name='Sunflower image', artifact_object='images/sunflower.jpg')
 ```
 
 ### Finalise an experiment
 To make an experiment non-editable:
 ```python
-task = Task.get_task(task_id='') # get task ID from GUI
-task.close()
+experiment = Experiment.get_experiment(experiment_id='') # get experiment ID from GUI
+experiment.close()
 ```
 
 ## Models
@@ -192,10 +192,10 @@ CaiML provides automatic recording of standard python models such as:
 - MegEngine
 - CatBoost
 
-To record a model, simply initiate  a CaiML task in your notebook code:
+To record a model, simply initiate  a CaiML experiment in your notebook code:
 ```python
-task = Task.init(
-    task_name='Tensorflow Model', # task name of at least 3 characters
+experiment = Experiment.init(
+    experiment_name='Tensorflow Model', # experiment name of at least 3 characters
 )
 ```
 
@@ -205,8 +205,8 @@ To manually log a model:
 
 ### Manually log a model
 ```python
-task = Task.init(task_name="Model task")
-output_model = OutputModel(task=task, 
+experiment = Experiment.init(experiment_name="Model experiment")
+output_model = OutputModel(experiment=experiment, 
                             name="Sample model", # Optional
                             framework=None, # Optional, framework to be used like PyTorch
                             config_dict=None, # Optional, configuration as a dictionary
