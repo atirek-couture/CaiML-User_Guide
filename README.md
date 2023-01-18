@@ -181,6 +181,9 @@ experiment = Experiment.get_experiment(experiment_id='') # get experiment ID fro
 experiment.close()
 ```
 
+### Plots
+Matplotlib plots are automatically recorded by CaiMl & can be viewed under the PLOTS tab.
+
 ## Models
 CaiML provides automatic recording of standard python models such as:
 - Tensorflow
