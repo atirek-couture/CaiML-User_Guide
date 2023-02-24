@@ -133,8 +133,172 @@ Here's an example of automatic logging of tensorflow hyperparameters
 
 ![Hyperparameters](images/hyperparameters.png)
 
-To manually log hyperparameters:
+#### Connect hyperparameters to experiment
+Connect a set of hyperparameters to an already existing experiment
+```python
+# Connect Hyperparameters to Experiment.
+# experiments
+from cai.automl import Experiment
+
+# Get an instance of an experiment
+experiment = Experiment.get_experiment(experiment_id='') # Get experiment_id from GUI or console.
+
+# Define hyperparameters to connect to experiment
+args = {
+        '': val,  # Fill in '' with name of hyperparameter, replace val with the hyperparameter's default value. Add more hyperparameter-value pairs as required.
+       }
+# Example:
+# args = {
+#        'batch_size': 64,
+#        'layer_1_units': 128,
+#        }
+# Connect Hyperparameters to experiment
+experiment.connect(args)
+```
+
+#### Get hyperparameters
+Get hyperparameters connected to an already existing experiment
+```python
+# Get an experiment's hyperparameters
+# experiments
+from cai.automl import Experiment
+
+# get an instance of an exeriment
+experiment = Experiment.get_experiment(experiment_id='') # get experiment_id from GUI
+
+# Returns all hyperparameters of the experiment
+experiment.get_parameters()
+```
+
+#### Create optimizer experiment
+Create hyperparameter optimizer experiment from an already existing experiment
+```python
+# Create an optimizer experiment.
+# experiments
+from cai.automl import Experiment
+
+#Initialize an optimizer experiment
+experiment = Experiment.init(project_name='',
+                 experiment_name='',
+                 task_type=Experiment.ExperimentTypes.optimizer,
+                 reuse_last_task_id=False) # Fill the project and experiment names.
+
+# Experiment arguments containing the id of an already created experiment whose hyperparameters we want to optimize.
+args = {
+    'template_experiment_id': None, # Provide the template experiment id we want to optimize, if available.
+}
+args = experiment.connect(args)
+
+# Get the template experiment id that we want to optimize, using the experiment name instead.
+if not args['template_experiment_id']:
+    args['template_experiment_id'] = Experiment.get_experiment(
+        experiment_name='').id # Fill in the experiment name.
+```
+
+#### Define optimizer
+Define the optimizer class
+```python
+# Define the optimizer.
+# experiments
+!pip install --quiet optuna
+!pip install --quiet hpbandster
+from cai.automl import Experiment
+from cai.automl.automation import (
+    DiscreteParameterRange, HyperParameterOptimizer, GridSearch,
+    RandomSearch, UniformIntegerParameterRange, UniformParameterRange, ParameterSet
+    )
+from cai.automl.automation.optuna import OptimizerOptuna
+from cai.automl.automation.hpbandster import OptimizerBOHB
+
+# Get an instance of an experiment
+experiment = Experiment.get_experiment(experiment_id='') # Get optimizer experiment_id from GUI or console.
+
+optimizer = HyperParameterOptimizer(
+    # This is the experiment we want to optimize
+    base_task_id='', # Fill id of the base experiment we want to optimize.
+    # We define the hyper-parameters to optimize here.
+    # The parameter name should match with UI: <section_name>/<parameter>
+    # For example, if in base experiment we have 'General' section, and a parameter 'batch_size' in it, naming should be 'General/batch_size'
+    # The hyperparameters are found in the 'General' section by default.
+    # Example use case for ANN -
+    # hyper_parameters=[
+    #    UniformIntegerParameterRange('General/layer_1', min_value=128, max_value=512, step_size=1),
+    #    UniformIntegerParameterRange('General/layer_2', min_value=128, max_value=512, step_size=1),
+    #    UniformParameterRange('General/drop_rate', min_value=0, max_value=1, step_size=0.01),
+    #    UniformIntegerParameterRange('General/batch_size',  min_value=96, max_value=160, step_size=10),
+    #    UniformIntegerParameterRange('General/epochs', min_value=20, max_value=40, step_size=1),
+    # ],
+    hyper_parameters=[
+        UniformIntegerParameterRange('', min_value=val, max_value=val, step_size=val), # Sample parameter as integer uniformly from min_value to max_value with difference of step_size. Fill name in '' and values in val.
+        UniformParameterRange('', min_value=val, max_value=val, step_size=val), # Sample parameter as float uniformly from min_value to max_value with difference of step_size. Fill name in '' and values in val.
+        DiscreteParameterRange('', values=[val, val]), # Sample parameter discretely from the given values. Fill name in '' and values in val.
+        ParameterSet(parameter_combinations=[{'': val, '': val},
+                                             {'': val, '': val}]), # Sample parameter discretely according to the combinations provided as sets. Fill name in '' and values in val.
+    ],
+    
+    # The objective metric we want to maximize/minimize
+    objective_metric_title='', # Fill title name for objective metric.
+    objective_metric_series='', # Fill series name for objective metric.
+    
+    # Define whether to maximimize or minimize objective.
+    objective_metric_sign='', # Fill 'max' for maximize, 'min' for minimize.
+    
+    # Define number of concurrent tasks to run.
+    max_number_of_concurrent_tasks=5, # Fill number of concurrent tasks.
+    
+    # Define the search strategy to be used.
+    optimizer_class=OptimizerOptuna, # Fill in the optimizer class. GridSearch, RandomSearch, OptimizerOptuna and OptimizerBOHB are currently available.
+
+    # Provide the sampler class, if using OptunaOptimizer. The classes are available in the module optuna.samplers.
+    # If None, TPESampler class will be used by default.
+    sampler_class=None, # Fill in the sampler class.
+
+    # Provide the pruner class, if using OptunaOptimizer. The classes are available in the module optuna.pruners.
+    # If None, MedianPruner class will be used by default.
+    pruner_class=None, # Fill in the pruner class.
+
+    # Set number of maximum jobs to launch for optimization. None is unlimited.
+    total_max_jobs=10, # Fill in maximum total jobs.
+
+    # Set maximum number of iterations for experiment to execute.
+    max_iteration_per_job=30, # Fill in maximum no. of iterations per job.
+)
+```
+
+#### Run optimizer
+Run the hyperparameter optimization experiment
+```python
+# Run the optimizer.
+# experiments
+from cai.automl import Experiment
+
+# Get an instance of an experiment
+experiment = Experiment.get_experiment(experiment_id='') # Get optimizer experiment_id from GUI or console.
+
+# Set reporting period in minutes - the interval after which optimization report is generated in console. 
+optimizer.set_report_period(0.5) # Fill in reporting period.
+
+# Start optimization process locally.
+optimizer.start_locally()
+
+# Set time period for the optimization prcoess in minutes.
+optimizer.set_time_limit(in_minutes=120) # Fill in time period.
+
+# Wait until process is done.
+optimizer.wait()
+
+# Print the top performing k experiments' ids.
+top_exp = an_optimizer.get_top_experiments(top_k=5) # Fill in value of k.
+print([t.id for t in top_exp])
+
+# Stop background optimization.
+optimizer.stop()
+
+print('Hyperparameter Optimization is complete.')
+```
+
 #### Manually log hyperparameters
+Hyperparameters can be manually logged
 ```python
 experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
 experiment.set_parameters_as_dict({'epochs': 20, 'max_value':100}) # pass hyperparameters as string:number dictionary
@@ -147,6 +311,54 @@ experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5
 params_dict = {'epochs': 20, 'max_value':100}
 experiment.connect(params_dict)
 ```
+
+#### Log complex objects
+Log objects more complex than a dictionary
+```python 
+# Logging blob objects
+# experiments
+
+from cai.automl import Experiment
+
+# get an instance of an exeriment
+experiment = Experiment.get_experiment(experiment_id='') # get experiment_id from GUI
+
+# To log objects more complicated than a dictionary
+# configuration: variable name of the data being passed
+experiment.connect_configuration(
+  name='', configuration=None
+)
+# Example:
+# model_config_dict = {
+#    'value': 13.37,  'dict': {'sub_value': 'string'},  'list_of_ints': [1, 2, 3, 4],
+# }
+# experiment.connect_configuration(
+#   name='dictionary', configuration=model_config_dict
+# )
+```
+
+#### Log user properties
+Log user metadata that does not impact code execution
+```python 
+# Set User Properties
+# experiments
+from cai.automl import Experiment
+
+# get an instance of an exeriment
+experiment = Experiment.get_experiment(experiment_id='') # get experiment_id from GUI
+
+# User Properties do not impact code execution
+# Can be used to log metadata as a dictionary
+# A user property can contain the fields - name, value, description and type
+experiment.set_user_properties(
+  {"": "", "": ""}
+)
+# Example:
+# experiment.set_user_properties(
+# {"name": "my_name", "description": "my_desc", "value": "my_val"}
+# )
+```
+
 ### Artifacts
 CaiML allows easy storage of experiments' output products as artifacts that can later be accessed easily and used. Some examples of artifacts are:
 -   Numpy objects
