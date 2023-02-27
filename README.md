@@ -133,6 +133,14 @@ Here's an example of automatic logging of tensorflow hyperparameters
 
 ![Hyperparameters](images/hyperparameters.png)
 
+CaiML has automatic hyperparameter optimization feature which takes a base experiment and creates a separate optimizer experiment which injects the hyperparameters into the base experiment and runs them as separate training experiments as follows -
+
+![Optimization Process](images/optimization_process.png)
+
+Plots related to the hyperparameter optimization are automatically generated live -
+
+![Optimization Plots](images/optimization_plots.png)
+
 #### Connect hyperparameters to experiment
 Connect a set of hyperparameters to an already existing experiment
 ```python
