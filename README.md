@@ -486,3 +486,68 @@ Similarly other properties can be gotten from a model. An exhaustive list can be
 from caiml import InputModel, OutputModel
 url = model.url # model can be an instance of either of OutputModel/InputModel class
 ```
+
+## Model Serving
+
+The process of deploying a machine learning model so that it can be used by applications and systems elsewhere to make real-time predictions and classifications based on incoming data is called Model Serving.
+
+Basically, it involves deploying a trained model to a production environment, setting up infrastructure such as servers or cloud platforms, and building an API that can take in data, apply the model, and return the predictions.
+
+Model serving also involves monitoring the performance of the model in production and making updates or improvements as needed. This includes retraining the model with updated data or algorithms to improve its accuracy and effectiveness.
+
+### Cai AutoML Serving features:
+A CLI tool for model serving in CaiML.
+1. Support for multiple model libraries, like
+    - scikit-learn
+    - xgboost
+    - lightgbm
+    - Tensorflow
+    - Keras
+    - Pytorch
+
+2. Support for custom trained model to be served.
+3. Pre/Post process model script/template for converting user's input and model's input (`preprocess()`), and also for model's output and response sent to the user (`postprocess()`).
+4. Artifact storage in multiple formats, such as local storage, S3, and GCS.
+5. Serving endpoints are created so that it can be easily used in APIs.
+6. Monitoring the resources, metrics, and performance of the models, as well as auto-logging of metrics.
+7. Support for both A/B testing and Canary Endpoint Testing. The ratio/weights provided in CLI determine the type of testing:
+    - Comparable ratio of requests represents A/B testing
+    - Ratio where one portion is significantly larger than the other represents Canary deployments.
+
+
+### Getting Started
+
+1. Install the CLI tool by running `pip install caiml-serving`.
+
+2. Create a serving service for the model to be served, by the following command,
+    > `caiml-serving create --name "serving example"` (note down the service ID generated)
+
+3. Either train a new Model or use already trained model by uploading it or finding its ID. Make sure `Experiment.init()` is present before model training.
+
+4. Make sure to dump and store the trained model, if training from scratch.
+
+5. Register the model
+    > `caiml-serving --id <service_id> model add --engine "" --endpoint "" --preprocess "" --name "" --project ""`
+
+    - Available engines are triton, sklearn, xgboost, lightgbm, custom, custom_async.
+    - Provide the `<service_id>` generated when serving-service was created.
+    - Add endpoint of your choice, which would be appended to the `BASE_SERVE_URL` for serving over the endpoint.
+    - Provide preprocessing and postprocessing code for the input and output format validation and conversion to get appropriate request-response.
+    - Provide the correct name and project for the model to be registered over the service.
+
+6. (Optional) Configure the model auto-update on the Serving Service
+    > `caiml-serving --id <service_id> model auto-update --engine "" --endpoint "" --preprocess "" --name "" --project "" --max-versions 2`
+
+    - Provide all the necessary arguments in the above CLI as per requirement.
+
+7. (Optional) A/B Testing / Canary Endpoint Setup
+    > `caiml-serving --id <service_id> model canary --endpoint "test_model" --weights 0.1 0.9 --input-endpoints test_model/2 test_model/1`
+
+    - All requests to the endpoint, `/test_model` will re-direct 10% to `/test_model/2` and 90% to `/test_model/1`.
+
+8. Testing endpoint (serving)
+    - run the python file `request.py` (`python request.py`) by modifying the input parameters for serving.
+    > `response_text = curlReq("", payload_file = "", payload_img = "", payload = "")`
+    
+    - Only provide one of the arguments from `payload_file`, `payload_img`, and `payload`, where `payload` is a dictionary, `payload_file` is path for input JSON file, and `payload_img` is path to a png/jpg image (for triton based engine).
+    
