@@ -286,7 +286,7 @@ experiment = Experiment.get_experiment(experiment_id='') # Get optimizer experim
 
 optimizer = HyperParameterOptimizer(
     # This is the experiment we want to optimize
-    base_task_id='', # Fill id of the base experiment we want to optimize.
+    base_task_id='', # Fill id of the base experiment we want to optimize. If the optimizer experiment was created using code snippet, it is stored in args['template_experiment_id'].
     # We define the hyper-parameters to optimize here.
     # The parameter name should match with UI: <section_name>/<parameter>
     # For example, if in base experiment we have 'General' section, and a parameter 'batch_size' in it, naming should be 'General/batch_size'
