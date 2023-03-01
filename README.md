@@ -133,14 +133,6 @@ Here's an example of automatic logging of tensorflow hyperparameters
 
 ![Hyperparameters](images/hyperparameters.png)
 
-CaiML has automatic hyperparameter optimization feature which takes a base experiment and creates a separate optimizer experiment which injects the hyperparameters into the base experiment and runs them as separate training experiments as follows -
-
-![Optimization Process](images/optimization_process.png)
-
-Plots related to the hyperparameter optimization are automatically generated live -
-
-![Optimization Plots](images/optimization_plots.png)
-
 #### Connect hyperparameters to experiment
 Connect a set of hyperparameters to an already existing experiment
 ```python
@@ -177,6 +169,77 @@ experiment = Experiment.get_experiment(experiment_id='') # get experiment_id fro
 # Returns all hyperparameters of the experiment
 experiment.get_parameters()
 ```
+
+#### Manually log hyperparameters
+Hyperparameters can be manually logged
+```python
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
+experiment.set_parameters_as_dict({'epochs': 20, 'max_value':100}) # pass hyperparameters as string:number dictionary
+```
+
+#### Log python objects
+Python objects such as variables, classes, numpy objects can be logged
+```python 
+experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
+params_dict = {'epochs': 20, 'max_value':100}
+experiment.connect(params_dict)
+```
+
+#### Log complex objects
+Log objects more complex than a dictionary
+```python 
+# Logging blob objects
+# experiments
+
+from cai.automl import Experiment
+
+# get an instance of an exeriment
+experiment = Experiment.get_experiment(experiment_id='') # get experiment_id from GUI
+
+# To log objects more complicated than a dictionary
+# configuration: variable name of the data being passed
+experiment.connect_configuration(
+  name='', configuration=None
+)
+# Example:
+# model_config_dict = {
+#    'value': 13.37,  'dict': {'sub_value': 'string'},  'list_of_ints': [1, 2, 3, 4],
+# }
+# experiment.connect_configuration(
+#   name='dictionary', configuration=model_config_dict
+# )
+```
+
+#### Log user properties
+Log user metadata that does not impact code execution
+```python 
+# Set User Properties
+# experiments
+from cai.automl import Experiment
+
+# get an instance of an exeriment
+experiment = Experiment.get_experiment(experiment_id='') # get experiment_id from GUI
+
+# User Properties do not impact code execution
+# Can be used to log metadata as a dictionary
+# A user property can contain the fields - name, value, description and type
+experiment.set_user_properties(
+  {"": "", "": ""}
+)
+# Example:
+# experiment.set_user_properties(
+# {"name": "my_name", "description": "my_desc", "value": "my_val"}
+# )
+```
+
+### Hyperparameter Optimization
+Hyperparamater Optimization (HPO) is the process of optimizing an experiment on the basis of different values of hyperparameters connected to it. CaiML has automatic HPO feature. It works by creating a separate optimizer experiment to clone a base experiment, injecting new values of hyperparameters into the base experiment and running them as separate training experiments as follows -
+
+![Optimization Process](images/optimization_process.png)
+
+Plots related to the hyperparameter optimization are automatically generated live -
+
+![Optimization Plots](images/optimization_plots.png)
 
 #### Create optimizer experiment
 Create hyperparameter optimizer experiment from an already existing experiment
@@ -303,68 +366,6 @@ print([t.id for t in top_exp])
 optimizer.stop()
 
 print('Hyperparameter Optimization is complete.')
-```
-
-#### Manually log hyperparameters
-Hyperparameters can be manually logged
-```python
-experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
-experiment.set_parameters_as_dict({'epochs': 20, 'max_value':100}) # pass hyperparameters as string:number dictionary
-```
-
-#### Log python objects
-Python objects such as variables, classes, numpy objects can be logged
-```python 
-experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
-params_dict = {'epochs': 20, 'max_value':100}
-experiment.connect(params_dict)
-```
-
-#### Log complex objects
-Log objects more complex than a dictionary
-```python 
-# Logging blob objects
-# experiments
-
-from cai.automl import Experiment
-
-# get an instance of an exeriment
-experiment = Experiment.get_experiment(experiment_id='') # get experiment_id from GUI
-
-# To log objects more complicated than a dictionary
-# configuration: variable name of the data being passed
-experiment.connect_configuration(
-  name='', configuration=None
-)
-# Example:
-# model_config_dict = {
-#    'value': 13.37,  'dict': {'sub_value': 'string'},  'list_of_ints': [1, 2, 3, 4],
-# }
-# experiment.connect_configuration(
-#   name='dictionary', configuration=model_config_dict
-# )
-```
-
-#### Log user properties
-Log user metadata that does not impact code execution
-```python 
-# Set User Properties
-# experiments
-from cai.automl import Experiment
-
-# get an instance of an exeriment
-experiment = Experiment.get_experiment(experiment_id='') # get experiment_id from GUI
-
-# User Properties do not impact code execution
-# Can be used to log metadata as a dictionary
-# A user property can contain the fields - name, value, description and type
-experiment.set_user_properties(
-  {"": "", "": ""}
-)
-# Example:
-# experiment.set_user_properties(
-# {"name": "my_name", "description": "my_desc", "value": "my_val"}
-# )
 ```
 
 ### Artifacts
