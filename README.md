@@ -359,7 +359,7 @@ optimizer.set_time_limit(in_minutes=120) # Fill in time period.
 optimizer.wait()
 
 # Print the top performing k experiments' ids.
-top_exp = an_optimizer.get_top_experiments(top_k=5) # Fill in value of k.
+top_exp = optimizer.get_top_experiments(top_k=5) # Fill in value of k.
 print([t.id for t in top_exp])
 
 # Stop background optimization.
