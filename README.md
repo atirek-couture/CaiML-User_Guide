@@ -510,10 +510,11 @@ A CLI tool for model serving in CaiML.
 3. Pre/Post process model script/template for converting user's input and model's input (`preprocess()`), and also for model's output and response sent to the user (`postprocess()`).
 4. Artifact storage in multiple formats, such as local storage, S3, and GCS.
 5. Serving endpoints are created so that it can be easily used in APIs.
-6. Monitoring the resources, metrics, and performance of the models, as well as auto-logging of metrics.
-7. Support for both A/B testing and Canary Endpoint Testing. The ratio/weights provided in CLI determine the type of testing:
+6. Support for both A/B testing and Canary Endpoint Testing. The ratio/weights provided in CLI determine the type of testing:
     - Comparable ratio of requests represents A/B testing
     - Ratio where one portion is significantly larger than the other represents Canary deployments.
+
+7. Monitoring the resources, metrics, and performance of the models, as well as auto-logging of metrics. Serving-inference sends the statistics that include `latency`, `count`, and related API requests stats. Model-specific metrics can be logged while training itself, which will be displayed in the Experiment Tracking section.
 
 
 ### Getting Started
@@ -544,11 +545,15 @@ A CLI tool for model serving in CaiML.
 7. (Optional) A/B Testing / Canary Endpoint Setup
     > `caiml-serving --id <service_id> model canary --endpoint "test_model" --weights 0.1 0.9 --input-endpoints test_model/2 test_model/1`
 
-    - All requests to the endpoint, `/test_model` will re-direct 10% to `/test_model/2` and 90% to `/test_model/1`.
+    - All requests to the endpoint, `/test_model` will re-direct 10% to `/test_model/2` and 90% to `/test_model/1` (make sure that these endpoints `/test_model/1`, `/test_model/2` are already present).
 
 8. Testing endpoint (serving)
     - run the python file `request.py` (`python request.py`) by modifying the input parameters for serving.
     > `response_text = curlReq("", payload_file = "", payload_img = "", payload = "")`
     
     - Only provide one of the arguments from `payload_file`, `payload_img`, and `payload`, where `payload` is a dictionary, `payload_file` is path for input JSON file, and `payload_img` is path to a png/jpg image (for triton based engine).
+
+9. Serving Statistics: `count` & `latency` for the serving-inference requests are automatically sent as statistics to Prometheus and Grafana for display and further visualizations. Custom metrics can also be added, like logging request input features and output predictions in the form of buckets for Prometheus.
+    > `caiml-serving --id <service_id> metrics add --endpoint "test_model" --variable-scalar x0=0,0.1,0.5,1,10 x1=0,0.1,0.5,1,10 y=0,0.1,0.5,0.75,1`
+    - `test_model` is the endpoint and `x0`, `x1` are input features, while `y` is the output for the same.
     
