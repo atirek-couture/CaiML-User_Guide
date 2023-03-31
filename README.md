@@ -173,14 +173,28 @@ experiment.get_parameters()
 #### Manually log hyperparameters
 Hyperparameters can be manually logged
 ```python
+# Manually log hyperparameters
+# experiments
+from cai.automl import Experiment
+
+# get an instance of an experiment
 experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
+
+# Set hyperparameters
 experiment.set_parameters_as_dict({'epochs': 20, 'max_value':100}) # pass hyperparameters as string:number dictionary
 ```
 
 #### Log python objects
 Python objects such as variables, classes, numpy objects can be logged
-```python 
+```python
+# Log python objects
+# experiments
+from cai.automl import Experiment
+
+# get an instance of an experiment 
 experiment = Experiment.get_experiment(experiment_id='c6b147a022274092bc3e1b75f5f09d7a') # get experiment ID from GUI
+
+# Log dictionary
 params_dict = {'epochs': 20, 'max_value':100}
 experiment.connect(params_dict)
 ```
